@@ -10,8 +10,10 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 			socket = new Socket(server,port);
 		}catch(UnknownHostException exception){
 			System.out.println("Error : "+exception);
+			System.exit(-1);
 		 }catch(IOException ioe){
 			System.out.println("Error :"+ioe);
+			System.exit(-1);
 	     }
 		return socket;
 	}
@@ -23,32 +25,43 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 		}
 		catch(UnknownHostException exception){
 			System.out.println("Error :"+exception);
+		    System.exit(-1);
 	     }  
 		
 		catch(IOException ioe){
 			System.out.println("Error :"+ioe);
+			System.exit(-1);
+
 	     }
 	    return server;
 	}
 
 	public boolean sendMessage(Socket socket,String message) {
 		try {
-		  	PrintWriter out = new PrintWriter(socket.getOutputStream());
-			out.println(message);
-			out.close();
+			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
+		  //	PrintWriter out = new PrintWriter(socket.getOutputStream());
+		  	out.write(message);
+	      	out.flush();
+		  	out.close();
 		}catch(IOException ioe){
 			System.out.println("Error :"+ioe);
+			System.exit(-1);
+
 		 }
 		return true;
     }
 
     public String receiveMessage(Socket socket) {
-    	BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     	String message = null;
+   
     	try {
-			 message = in.readLine();
+		 	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            message = in.readLine();
+			in.close();
 		} catch (IOException ioe) {
 			System.out.println("Error : "+ioe);
+			System.exit(-1);
+
 		  }
     	return message;
     }
