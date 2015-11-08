@@ -43,8 +43,14 @@ public class NetworkSocket implements Gchat.NetworkInterface {
     }
 
     public String receiveMessage(Socket socket) {
-
-    	return null;
+    	BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    	String message = null;
+    	try {
+			 message = in.readLine();
+		} catch (IOException ioe) {
+			System.out.println("Error : "+ioe);
+		  }
+    	return message;
     }
 
 }
