@@ -42,7 +42,7 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 		  //	PrintWriter out = new PrintWriter(socket.getOutputStream());
 		  	out.write(message);
 	      	out.flush();
-		  	out.close();
+		  //	out.close();
 		}catch(IOException ioe){
 			System.out.println("Error :"+ioe);
 			System.exit(-1);
@@ -57,7 +57,7 @@ public class NetworkSocket implements Gchat.NetworkInterface {
     	try {
 		 	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             message = in.readLine();
-			in.close();
+		 //	in.close();
 		} catch (IOException ioe) {
 			System.out.println("Error : "+ioe);
 			System.exit(-1);

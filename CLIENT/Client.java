@@ -22,8 +22,12 @@ public class Client implements Runnable{
 
     //Receive the welcome message from the server
       System.out.println(clientObj.socket.receiveMessage(clientObj.serverSocket));
+    
 
-    //Create new Thread to handle receiving message operation
+     //TESTING PHASE
+     //  clientObj.socket.sendMessage(clientObj.serverSocket,"OK I'm Received YOUR MESSAGE!!\n")
+
+     //Create new Thread to handle receiving message operation
       Thread newThread = new Thread(clientObj);
       newThread.start();
        
