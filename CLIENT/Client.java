@@ -71,7 +71,7 @@ public class Client implements Runnable{
       }
 
     } while(!clientOption.equals("e"));
-	}
+}
 
 	public void run() {
 	  String message = null;
@@ -81,7 +81,7 @@ public class Client implements Runnable{
 	  message = socket.receiveMessage(serverSocket);
 	//If client Console Screen is busy. 
 	  if(consoleLock) {
-	  //Wait for client typing is completed.
+	  //Wait until Client Console Screen is free
 	  	while(consoleLock) {
 
 	  	}

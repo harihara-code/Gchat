@@ -39,10 +39,9 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 	public boolean sendMessage(Socket socket,String message) {
 		try {
 			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
-		  //	PrintWriter out = new PrintWriter(socket.getOutputStream());
-		  	out.write(message);
+			message += "\n";
+			out.write(message);
 	      	out.flush();
-		  //	out.close();
 		}catch(IOException ioe){
 			System.out.println("Error :"+ioe);
 			System.exit(-1);
@@ -57,13 +56,12 @@ public class NetworkSocket implements Gchat.NetworkInterface {
     	try {
 		 	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             message = in.readLine();
-		 //	in.close();
 		} catch (IOException ioe) {
 			System.out.println("Error : "+ioe);
 			System.exit(-1);
-
 		  }
     	return message;
     }
+
 
 }
