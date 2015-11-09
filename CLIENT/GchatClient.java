@@ -11,7 +11,7 @@ public class GchatClient implements Runnable{
 
     public static void main(String args[]) throws Exception {
     //Instantiates Gchat.Client class object
-      Client clientObj = new Client();
+      GchatClient clientObj = new GchatClient();
 
 	//Instantiates Gchat.NetworkSocket class object
 	  clientObj.socket = new Gchat.NetworkSocket();
