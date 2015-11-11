@@ -3,7 +3,6 @@ package Gchat.SERVER;
 class ClientHandler {
 	
 	private static final int MAXIMUMCLIENT = 10;
-	Socket tempSocket = null;
 	GchatClientSocket gchatClientSocketObj[];
 
 	public ClientHandler() {
@@ -13,6 +12,7 @@ class ClientHandler {
 
 	}
 
+   //Allocate resource for newly connected client
 	public boolean allocateResourceForClient(Socket s,int socketID,) {
 
 		int resourceID = getFreeResourceIndex();
@@ -22,13 +22,15 @@ class ClientHandler {
 			return false;
 		}
 		else {
+	
 			gchatClientSocketObj[resourceID].socket = s;
 			gchatClientSocketObj[resourceID].socketID = socketID;
 			return true;
-		}
+     	}
 
     }
-
+    
+   //Deallocate resource for existing connected client
 	public boolean deallocateResourceForClient(int socketID) {
 
 
@@ -41,7 +43,7 @@ class ClientHandler {
 			}
 
 			return false;
-			
+
 		}	
 
 	}

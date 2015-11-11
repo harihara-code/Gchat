@@ -52,9 +52,11 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 
 	public boolean sendMessage(Socket socket,String message) {
 
+		OutputStreamWriter out = null;
+		
 		try {
 
-			OutputStreamWriter out = new OutputStreamWriter(socket.getOutputStream());
+			out = new OutputStreamWriter(socket.getOutputStream());
 			message += "\n";
 			out.write(message);
 	      	out.flush();
@@ -65,7 +67,9 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 		 //	System.exit(-1);
 			return false;
 		 }
-
+	//Close the socket InputStream
+		out.close();
+         
 		return true;
 
     }
@@ -76,6 +80,7 @@ public class NetworkSocket implements Gchat.NetworkInterface {
    
     	try {
 
+    	//Open the socket InputStream for data reading from it
 		 	BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             message = in.readLine();
 
@@ -85,6 +90,10 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 		    System.exit(-1);
 
 		  }
+
+		//Close the socket InputStream
+		   in.close();
+
     	return message;
 
     }
