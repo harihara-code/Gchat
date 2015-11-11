@@ -13,7 +13,7 @@ class ClientHandler {
 	}
 
    //Allocate resource for newly connected client
-	public boolean allocateResourceForClient(Socket s,int socketID,) {
+	public boolean allocateResourceForClient(Socket s,int socketID) {
 
 		int resourceID = getFreeResourceIndex();
 
