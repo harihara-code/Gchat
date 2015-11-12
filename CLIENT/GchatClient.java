@@ -27,7 +27,7 @@ public class GchatClient implements Runnable
 
       BufferedReader consoleScreen = new BufferedReader(new InputStreamReader(System.in));
    //We connect to the server through creating socket to it
-      clientObj.serverSocket = clientObj.socket.createSocket("harihara26091995.koding.io",7298);
+      clientObj.serverSocket = clientObj.socket.createSocket("127.0.0.1",7298);
    
       //System.out.println("Socket Created");
       //testing
@@ -54,10 +54,11 @@ public class GchatClient implements Runnable
        
       String clientOption = null;
     do {
-    //Display Client Menu Interfac
-      System.out.println("Chat - Enter c");
-      System.out.println("Who's online - v");
-      System.out.println("Exit - Enter e");
+    //Display Client Menu Options
+      System.out.println("Menu Options\n-----------------");
+      System.out.println("1.To Chat - Enter c");
+      System.out.println("2.To see Who's online - Enter v");
+      System.out.println("3.To Exit - Enter e");
       clientOption = consoleScreen.readLine();
      
     //Enable the console lock to tell client ConsoleScreen is busy in chatting.
@@ -65,7 +66,7 @@ public class GchatClient implements Runnable
 
       if(clientOption.equals("c")) {
 
-      	System.out.print("Enter the Message : ");
+      	System.out.print("Enter the Message to send : ");
       	String message = consoleScreen.readLine();
 	 
 	 //Sending message to the server

@@ -63,7 +63,7 @@ public class ClientHandler implements Runnable
 		int resourceID = getFreeResourceIndex();
 
 		//Debugging phase
-			System.out.println("resource ID"+ resourceID);
+			//System.out.println("resource ID"+ resourceID);
 
 		if(resourceID == -1) 
 			return false;
@@ -75,7 +75,7 @@ public class ClientHandler implements Runnable
 			gchatClientSocketObj[resourceID].socketName = socketName;
 		//Notify other client that this client is connected to the server
 			sendToAll(gchatClientSocketObj[resourceID].socketName+" is connected to the server",gchatClientSocketObj[resourceID].socketID);
-			System.out.println(gchatClientSocketObj[resourceID].socketName + "is connected");
+			System.out.println(gchatClientSocketObj[resourceID].socketName + " is connected");
 	   	// Allocate incomingthread
 	        gchatServerObj.clientHandlerObj.clientIncomingThread[resourceID] = new Thread(gchatServerObj.clientHandlerObj);
 	   	// start the new thread to receive message from the client
@@ -117,8 +117,9 @@ public class ClientHandler implements Runnable
 	 
 		if(message.equals("whos")) 
 		{
+		
 			String onlineList = "";
-			System.out.println("whos request received");
+			//System.out.println("whos request received");
 			for(int i=0;i<MAXIMUMCLIENT;i++) 
 			{
 			   if(gchatClientSocketObj[i].socket != null) 
@@ -136,7 +137,7 @@ public class ClientHandler implements Runnable
 				gchatServerObj.networkSocketObj.sendMessage(clientGchatSocket.socket,onlineList);
 
 			}
-			System.out.println("whos response sent");
+			//System.out.println("whos response sent");
 		}
 
 		else if(!message.equals("quit")) 
@@ -165,7 +166,7 @@ public class ClientHandler implements Runnable
 		  }
 		  //client disconnected from server notification will send to all other connected clients
 			sendToAll(clientGchatSocket.socketName + " is disconnected from the server",clientGchatSocket.socketID);
-			System.out.println(clientGchatSocket.socketName + "is disconnected");
+			System.out.println(clientGchatSocket.socketName + " is disconnected");
 		 //Free this client allocated resource for reuse	
 			deallocateResourceForClient(clientGchatSocket.socketID);
 
