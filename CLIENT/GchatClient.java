@@ -9,25 +9,39 @@ package Gchat.CLIENT;
 import java.net.*;
 import java.io.*;
 
-public class GchatClient implements Runnable{
+//GchatClient - Client program 
+public class GchatClient implements Runnable
+{
 
-    private Socket serverSocket = null;
+    private Socket serverSocket = null; 
     private Gchat.NetworkSocket socket = null;
     private volatile boolean consoleLock = false;
-
-    public static void main(String args[]) throws Exception {
-    //Instantiates Gchat.GchatClient class object
+ 
+    public static void main(String args[]) throws Exception 
+    {
+     //Instantiates GchatClient class 
       GchatClient clientObj = new GchatClient();
 
-	//Instantiates Gchat.NetworkSocket class object
+	//Instantiates Gchat.NetworkSocket class 
 	  clientObj.socket = new Gchat.NetworkSocket();
-      
-    //Creating Network socket to connect to the server
-      clientObj.serverSocket = clientObj.socket.createSocket("127.0.0.1",7298);
-      System.out.println("Socket Created");
+
+      BufferedReader consoleScreen = new BufferedReader(new InputStreamReader(System.in));
+   //We connect to the server through creating socket to it
+      clientObj.serverSocket = clientObj.socket.createSocket("harihara26091995.koding.io",7298);
+   
+      //System.out.println("Socket Created");
       //testing
        	//clientObj.socket.sendMessage(clientObj.serverSocket,"quit");
-    //Receive the welcome message from the server
+
+   //Notify client is connected to the server
+      System.out.println("GchatServer is connected");
+
+   //Client name is sent to the server to identify itself
+      System.out.print("Enter the client name :");
+      String name = consoleScreen.readLine();
+      clientObj.socket.sendMessage(clientObj.serverSocket,name);
+
+   //Receive the welcome message from the server
       System.out.println(clientObj.socket.receiveMessage(clientObj.serverSocket));
     
 
@@ -39,11 +53,10 @@ public class GchatClient implements Runnable{
       newThread.start();
        
       String clientOption = null;
-      BufferedReader consoleScreen = new BufferedReader(new InputStreamReader(System.in));
-
     do {
-    //Display Client Menu Interface
+    //Display Client Menu Interfac
       System.out.println("Chat - Enter c");
+      System.out.println("Who's online - v");
       System.out.println("Exit - Enter e");
       clientOption = consoleScreen.readLine();
      
@@ -54,29 +67,40 @@ public class GchatClient implements Runnable{
 
       	System.out.print("Enter the Message : ");
       	String message = consoleScreen.readLine();
-
-      //Sending message to the server
+	 
+	 //Sending message to the server
       	clientObj.socket.sendMessage(clientObj.serverSocket,message);
       	
       //Chat Operation is completed clientConsoleScreen is free now 
       	clientObj.consoleLock = false;
       
       }
+      else if(clientOption.equals("v")) 
+      {
+
+      //Sending whosonline signal to the server
+      	clientObj.socket.sendMessage(clientObj.serverSocket,"whos");
+      //Free the consoleLock
+      	clientObj.consoleLock = false;
+		
+      }
       
-      else if(clientOption.equals("e")) {
+      else if(clientOption.equals("e")) 
+      {
       //Sending message to the server
       	clientObj.socket.sendMessage(clientObj.serverSocket,"quit");
-		System.out.println("Outcoming Closed");
+		//System.out.println("Outcoming Closed");
       //Chat Operation is completed clientConsoleScreen is free now 
       	clientObj.consoleLock = false;
       
 	  //Wait until newThread terminate its execution
 		newThread.join();
-      	System.out.println("Incoming Closed");
+      	//System.out.println("Incoming Closed");
 	  
 	  }
       
-      else {
+      else 
+      {
       //Chat Operation is completed clientConsoleScreen is free now 
       	clientObj.consoleLock = false;
       	System.out.println("Invalid Menu Option please try again.");
@@ -86,7 +110,8 @@ public class GchatClient implements Runnable{
     } while(!clientOption.equals("e"));
 }
 
-public void run() {
+public void run() 
+{
   
     String message = null;
 
@@ -103,10 +128,13 @@ public void run() {
 	  	}
 	  }
 
-	//console screen is free now
-	  System.out.println("Server :"+message);
+	//Check disconnect signal
+	  if(!message.equals("disconnect"))
+		//console screen is free now
+	  	System.out.println(message);
+
 	 } while(!message.equals("disconnect"));
-	 System.out.println("disconnect signal sent by the server");
+	 //System.out.println("disconnect signal sent by the server");
 
 	}
 }

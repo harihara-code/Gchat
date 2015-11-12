@@ -9,7 +9,8 @@ package Gchat.SERVER;
 import java.net.*;
 import java.io.*;
 
-public class ClientHandler implements Runnable {
+public class ClientHandler implements Runnable 
+{
   //MAXIMUMCLIENTS represents the maximum client limit the server can handle
 	private static final int MAXIMUMCLIENT = 10;
 
@@ -54,7 +55,10 @@ public class ClientHandler implements Runnable {
 
 
   //Allocate resource for newly connected client
-	public boolean allocateResourceForClient(Socket s,int socketID) {
+	public boolean allocateResourceForClient(Socket s,
+											 int socketID,
+											 String socketName) 
+	{
 
 		int resourceID = getFreeResourceIndex();
 
@@ -68,7 +72,10 @@ public class ClientHandler implements Runnable {
 			
 			gchatClientSocketObj[resourceID].socket = s;
 			gchatClientSocketObj[resourceID].socketID = socketID;
-		
+			gchatClientSocketObj[resourceID].socketName = socketName;
+		//Notify other client that this client is connected to the server
+			sendToAll(gchatClientSocketObj[resourceID].socketName+" is connected to the server",gchatClientSocketObj[resourceID].socketID);
+			System.out.println(gchatClientSocketObj[resourceID].socketName + "is connected");
 	   	// Allocate incomingthread
 	        gchatServerObj.clientHandlerObj.clientIncomingThread[resourceID] = new Thread(gchatServerObj.clientHandlerObj);
 	   	// start the new thread to receive message from the client
@@ -79,7 +86,8 @@ public class ClientHandler implements Runnable {
     }
 
 
-	public void run() {
+	public void run() 
+	{
 		incomingClientHandler();
 	} 
 
@@ -105,15 +113,45 @@ public class ClientHandler implements Runnable {
 	  	//We receive the message from connected client 
 		   message = gchatServerObj.networkSocketObj.receiveMessage(clientGchatSocket.socket);
 	  
-	    //Process the received client message
-		if(!message.equals("quit")) {
+   //Process the received client message
+	 
+		if(message.equals("whos")) 
+		{
+			String onlineList = "";
+			System.out.println("whos request received");
+			for(int i=0;i<MAXIMUMCLIENT;i++) 
+			{
+			   if(gchatClientSocketObj[i].socket != null) 
+			   		onlineList += gchatClientSocketObj[i].socketName + " ";
+			}
+		
+			if(onlineList == "") 
+			{
+			 	gchatServerObj.networkSocketObj.sendMessage(clientGchatSocket.socket,"None");
+
+			}
+			else
+			{
+				onlineList = "Online : "+onlineList;
+				gchatServerObj.networkSocketObj.sendMessage(clientGchatSocket.socket,onlineList);
+
+			}
+			System.out.println("whos response sent");
+		}
+
+		else if(!message.equals("quit")) 
+		{
+		  //Message is attached with sender name 
+			message = clientGchatSocket.socketName + ":"+message;
 			//this is valid client message so we sent this message to all other connected clients
 			  sendToAll(message,clientGchatSocket.socketID);
 		}
-		else {
-		  System.out.println("Client Sent quit signal");
+		else 
+		{
+		  //System.out.println("Client Sent quit signal");
 		 
-		  try {
+		  try 
+		  {
       	  //send disconnect signal to disconnect requesting client to close its receiving operation
              if(!gchatServerObj.networkSocketObj.sendMessage(clientGchatSocket.socket,"disconnect")) {
              	System.out.println("Message sending failed");
@@ -126,7 +164,8 @@ public class ClientHandler implements Runnable {
 		  	System.out.println("Error :"+ioe);
 		  }
 		  //client disconnected from server notification will send to all other connected clients
-			sendToAll(clientGchatSocket.socketID + " is disconnected from the server",clientGchatSocket.socketID);
+			sendToAll(clientGchatSocket.socketName + " is disconnected from the server",clientGchatSocket.socketID);
+			System.out.println(clientGchatSocket.socketName + "is disconnected");
 		 //Free this client allocated resource for reuse	
 			deallocateResourceForClient(clientGchatSocket.socketID);
 
@@ -136,7 +175,8 @@ public class ClientHandler implements Runnable {
   
     
  //Deallocate resource for disconnected client
-	public boolean deallocateResourceForClient(int socketID) {
+	public boolean deallocateResourceForClient(int socketID) 
+	{
 		for(int index = 0; index < MAXIMUMCLIENT; index++) {
 		//Disconnected Client resource deallocation done here 
 			if(gchatClientSocketObj[index].socketID == socketID) {

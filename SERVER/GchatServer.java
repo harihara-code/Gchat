@@ -37,32 +37,43 @@ public class GchatServer {
 
 	public static void main(String args[]) {
 		GchatServer GchatServerObj = new GchatServer();
-
-		do {
-			try {
-			 	//Debugging phase
-				  System.out.println("waiting for new client");
+		String clientName = null;
+   	//Debugging phase
+   	    System.out.println("GchatServer Started");
 		 		
-    		  //Accepting new client connection
+ 
+		do 
+		{
+			try
+			{
+   		  //Accepting new client connection
 				GchatServerObj.tempSocket = GchatServerObj.serverSocketObj.accept();
 				//Debugging phase
-				  System.out.println("new Client Connected");
-		 	} catch(IOException ioe) {
+				  //System.out.println("new Client Connected");
+		 	} 
+		 	catch(IOException ioe) 
+		 	{
 				System.out.println("Error :"+ioe);
 			}
     		
+    	//Get the name of the client
+    		clientName = GchatServerObj.networkSocketObj.receiveMessage(GchatServerObj.tempSocket);
 		
 		  //Allocating Resource for the newly connected client
 		    if(GchatServerObj.clientHandlerObj.allocateResourceForClient(GchatServerObj.tempSocket,
-		    															 GchatServerObj.clientIndex) ) {
+		    															 GchatServerObj.clientIndex,
+		    															 clientName) ) 
+		    {
 		    	//Debugging phase
-		    	  System.out.println("Allocation successfull");
-		    	  GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Welcome Client Nice to connect you ...");
-		    	
+		    	 // System.out.println("Allocation successfull");
+		    	  GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Welcome " +clientName+ " nice to connect you ...");
+    			
 				
 
 
-			} else {
+			} 
+			else
+			{
 		    
 		    	GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Maximum client Limit Reached");
 		    	try {
