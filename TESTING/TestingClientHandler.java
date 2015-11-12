@@ -1,0 +1,9 @@
+package Gchat.TESTING;
+import java.net.*;
+public class TestingClientHandler {
+	public static void main(String args[]) {
+		Gchat.SERVER.ClientHandler testobj = new Gchat.SERVER.ClientHandler();
+		for(int i = 0;i<11;i++)
+			testobj.allocateResourceForClient(new Socket(),i);
+	}
+}

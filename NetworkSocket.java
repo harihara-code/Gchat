@@ -4,8 +4,11 @@ import java.net.*;
 import java.io.*;
 
 public class NetworkSocket implements Gchat.NetworkInterface {
+	
 	public Socket createSocket(String server,int port) {
+	
 		Socket socket = null;
+	
 		try{
 
 			socket = new Socket(server,port);
@@ -57,10 +60,7 @@ public class NetworkSocket implements Gchat.NetworkInterface {
 			message += "\n";
 			out.write(message);
 	      	out.flush();
-      		//Close the socket InputStream
-			out.close();
-         
-
+	
 		}catch(IOException ioe){
 
 			System.out.println("Error :"+ioe);
@@ -79,11 +79,7 @@ public class NetworkSocket implements Gchat.NetworkInterface {
     	//Open the socket InputStream for data reading from it
 		 	in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             message = in.readLine();
-
-		//Close the socket InputStream
-		   in.close();
-
-		} catch (IOException ioe) {
+    	} catch (IOException ioe) {
 
 			System.out.println("Error : "+ioe);
 		    System.exit(-1);

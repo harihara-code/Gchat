@@ -10,16 +10,17 @@ public class GchatClient implements Runnable{
     private volatile boolean consoleLock = false;
 
     public static void main(String args[]) throws Exception {
-    //Instantiates Gchat.Client class object
+    //Instantiates Gchat.GchatClient class object
       GchatClient clientObj = new GchatClient();
 
 	//Instantiates Gchat.NetworkSocket class object
 	  clientObj.socket = new Gchat.NetworkSocket();
       
     //Creating Network socket to connect to the server
-      clientObj.serverSocket = clientObj.socket.createSocket("127.0.0.1",7872);
+      clientObj.serverSocket = clientObj.socket.createSocket("127.0.0.1",7298);
       System.out.println("Socket Created");
-
+      //testing
+       	//clientObj.socket.sendMessage(clientObj.serverSocket,"quit");
     //Receive the welcome message from the server
       System.out.println(clientObj.socket.receiveMessage(clientObj.serverSocket));
     
@@ -42,7 +43,9 @@ public class GchatClient implements Runnable{
      
     //Enable the console lock to tell client ConsoleScreen is busy in chatting.
       clientObj.consoleLock = true;
-      if(clientOption.equals("c")){
+
+      if(clientOption.equals("c")) {
+
       	System.out.print("Enter the Message : ");
       	String message = consoleScreen.readLine();
 
@@ -51,7 +54,9 @@ public class GchatClient implements Runnable{
       	
       //Chat Operation is completed clientConsoleScreen is free now 
       	clientObj.consoleLock = false;
+      
       }
+      
       else if(clientOption.equals("e")) {
       //Sending message to the server
       	clientObj.socket.sendMessage(clientObj.serverSocket,"quit");
@@ -62,7 +67,9 @@ public class GchatClient implements Runnable{
 	  //Wait until newThread terminate its execution
 		newThread.join();
       	System.out.println("Incoming Closed");
+	  
 	  }
+      
       else {
       //Chat Operation is completed clientConsoleScreen is free now 
       	clientObj.consoleLock = false;
@@ -73,23 +80,27 @@ public class GchatClient implements Runnable{
     } while(!clientOption.equals("e"));
 }
 
-	public void run() {
-	  String message = null;
+public void run() {
+  
+    String message = null;
 
 	do {
+
 	//Get the message from the server.
 	  message = socket.receiveMessage(serverSocket);
+
 	//If client Console Screen is busy. 
 	  if(consoleLock) {
-	  //Wait until Client Console Screen is free
-	  	while(consoleLock) {
+      //console screen is busy in chatting 
+   	  	while(consoleLock) {
 
 	  	}
 	  }
-	//Client Console screen is free now.
-	  System.out.println("Server :"+message);
-	 }while(!message.equals("quit"));
 
+	//console screen is free now
+	  System.out.println("Server :"+message);
+	 } while(!message.equals("disconnect"));
+	 System.out.println("disconnect signal sent by the server");
 
 	}
 }

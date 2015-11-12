@@ -1,9 +1,17 @@
+///////////////////////////////////////////////////////////////////////////
+/////File Name : GchatServer.java////////////////////////////////////////
+/////Coded by  : hariharan sathyanarayanan/////////////////////////////////
+/////copyright @ 2015 <harihara95@gmail.com>///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+
 package Gchat.SERVER;
 
 import java.io.*;
 import java.net.*;
 
 public class GchatServer {
+
     static final int serverPort = 7298;
 	Gchat.NetworkSocket networkSocketObj;
 	ServerSocket serverSocketObj;
@@ -32,22 +40,30 @@ public class GchatServer {
 
 		do {
 			try {
+			 	//Debugging phase
+				  System.out.println("waiting for new client");
+		 		
     		  //Accepting new client connection
 				GchatServerObj.tempSocket = GchatServerObj.serverSocketObj.accept();
+				//Debugging phase
+				  System.out.println("new Client Connected");
 		 	} catch(IOException ioe) {
-			System.out.println("Error :"+ioe);
+				System.out.println("Error :"+ioe);
 			}
     		
 		
-		  //Allocating Resource for new client
+		  //Allocating Resource for the newly connected client
 		    if(GchatServerObj.clientHandlerObj.allocateResourceForClient(GchatServerObj.tempSocket,
 		    															 GchatServerObj.clientIndex) ) {
-		    	GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Welcome Client Nice to connect you ...");
-				GchatServerObj.clientHandlerObj.clientIncomingThread.start();
+		    	//Debugging phase
+		    	  System.out.println("Allocation successfull");
+		    	  GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Welcome Client Nice to connect you ...");
+		    	
+				
 
 
-			} 
-		    else {
+			} else {
+		    
 		    	GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Maximum client Limit Reached");
 		    	try {
 			     //Close this client connection

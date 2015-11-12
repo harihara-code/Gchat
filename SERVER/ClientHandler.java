@@ -1,120 +1,190 @@
+///////////////////////////////////////////////////////////////////////////
+/////File Name : ClientHandler.java////////////////////////////////////////
+/////Coded by  : hariharan sathyanarayanan/////////////////////////////////
+/////copyright @ 2015 <harihara95@gmail.com>///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
 package Gchat.SERVER;
 
 import java.net.*;
 import java.io.*;
 
-class ClientHandler implements Runnable{
-	
+public class ClientHandler implements Runnable {
+  //MAXIMUMCLIENTS represents the maximum client limit the server can handle
 	private static final int MAXIMUMCLIENT = 10;
-    GchatClientSocket gchatClientSocketObj[];
-	GchatServer gchatServerObj;
-    Thread clientIncomingThread;
 
-  //Constructuing ClientHandler Object fields
+    GchatClientSocket gchatClientSocketObj[];
+
+	GchatServer gchatServerObj;
+
+    Thread clientIncomingThread[];
+
+  //Constructing ClientHandler Object fields
 	public ClientHandler(GchatServer serverObj) {
+      //Initializing gchatClientSocketObj [] and clientIncomingThread[]
 		gchatClientSocketObj = new GchatClientSocket[MAXIMUMCLIENT];
+		clientIncomingThread = new Thread[MAXIMUMCLIENT];
+
 		gchatServerObj = serverObj;
-		clientIncomingThread = new Thread(this);
+
+		for(int i = 0; i < MAXIMUMCLIENT; i++){
+	
+		 //Initializing gchatClientSocketObj[]
+			gchatClientSocketObj[i] = new GchatClientSocket();
+	
+			gchatClientSocketObj[i].socket = null;
+			clientIncomingThread[i] = null;
+
+		}
 	}
+
+	//testing
+		public ClientHandler() {
+			gchatClientSocketObj = new GchatClientSocket[MAXIMUMCLIENT];
+			clientIncomingThread = new Thread[MAXIMUMCLIENT];
+		    for(int i = 0; i < MAXIMUMCLIENT; i++){
+		 // Initializing gchatClientSocketObj[]
+			gchatClientSocketObj[i] = new GchatClientSocket();
+			gchatClientSocketObj[i].socket = null;
+			clientIncomingThread[i] = null;
+
+		 }
+		
+		}
+
 
   //Allocate resource for newly connected client
 	public boolean allocateResourceForClient(Socket s,int socketID) {
 
 		int resourceID = getFreeResourceIndex();
 
+		//Debugging phase
+			System.out.println("resource ID"+ resourceID);
+
 		if(resourceID == -1) 
 			return false;
+		//if resourceID is valid 
 		else {
+			
 			gchatClientSocketObj[resourceID].socket = s;
 			gchatClientSocketObj[resourceID].socketID = socketID;
+		
+	   	// Allocate incomingthread
+	        gchatServerObj.clientHandlerObj.clientIncomingThread[resourceID] = new Thread(gchatServerObj.clientHandlerObj);
+	   	// start the new thread to receive message from the client
+			gchatServerObj.clientHandlerObj.clientIncomingThread[resourceID].start();
 			return true;
      	}
 
     }
-    
-   //Deallocate resource for existing connected client
-	public boolean deallocateResourceForClient(int socketID) {
-		for(int index = 0; index < 10; index++) {
 
-		 // Client is disconnected so free this resource for reuse
+
+	public void run() {
+		incomingClientHandler();
+	} 
+
+ //Incoming Client Operation handles here
+	public void incomingClientHandler() {
+       
+      //Get newly connected client socket details  
+		GchatClientSocket clientGchatSocket = getGchatClientSocketByID(gchatServerObj.clientIndex);
+
+	  //checking clientGchatSocket == null
+		if(clientGchatSocket == null) {
+			System.out.println("Client Socket not found");
+			return;
+		}
+
+	  //We safely used clientIndex to retrieve current client socket now we increment it without worry about that
+		gchatServerObj.clientIndex++;
+		
+		String message = null;
+
+    //Receive messages from this client and processing it  
+	  do {		
+	  	//We receive the message from connected client 
+		   message = gchatServerObj.networkSocketObj.receiveMessage(clientGchatSocket.socket);
+	  
+	    //Process the received client message
+		if(!message.equals("quit")) {
+			//this is valid client message so we sent this message to all other connected clients
+			  sendToAll(message,clientGchatSocket.socketID);
+		}
+		else {
+		  System.out.println("Client Sent quit signal");
+		 
+		  try {
+      	  //send disconnect signal to disconnect requesting client to close its receiving operation
+             if(!gchatServerObj.networkSocketObj.sendMessage(clientGchatSocket.socket,"disconnect")) {
+             	System.out.println("Message sending failed");
+             }
+
+		
+		  //Client sent quit signal
+			clientGchatSocket.socket.close();	
+		  } catch(IOException ioe) {
+		  	System.out.println("Error :"+ioe);
+		  }
+		  //client disconnected from server notification will send to all other connected clients
+			sendToAll(clientGchatSocket.socketID + " is disconnected from the server",clientGchatSocket.socketID);
+		 //Free this client allocated resource for reuse	
+			deallocateResourceForClient(clientGchatSocket.socketID);
+
+		}
+      } while(!message.equals("quit"));
+}
+  
+    
+ //Deallocate resource for disconnected client
+	public boolean deallocateResourceForClient(int socketID) {
+		for(int index = 0; index < MAXIMUMCLIENT; index++) {
+		//Disconnected Client resource deallocation done here 
 			if(gchatClientSocketObj[index].socketID == socketID) {
-				gchatClientSocketObj[index] = null;
+			  //only deallocate socket not gchatClientSocketObj
+				gchatClientSocketObj[index].socket = null;
 				return true;
 			}
 
-		
-		}
+	    }
+
 		return false;	
 	}
 
   //Search for any free place available in gchatClientSocketObj[] if free it returns the resource index  
 	public int getFreeResourceIndex() {
-    	for(int index = 0; index < 10; index++) {
+    	for(int index = 0; index < MAXIMUMCLIENT; index++) {
 
-			if(gchatClientSocketObj[index] == null)	
+			if(gchatClientSocketObj[index].socket == null)	
 				return index;
 		}	
 
 		return -1;
 	}
 
-  //get the client socket resource by specifying its client socket id 
+  //get the client socket details by using client socket id  
 	public GchatClientSocket getGchatClientSocketByID(int id) {
-		for(int index = 0; index < 10; index++) {
+
+		for(int index = 0; index < MAXIMUMCLIENT; index++) {
+		  //If searching clientSocket found 
 			if(gchatClientSocketObj[index].socketID == id) {
 				return gchatClientSocketObj[index];
-
 			}
-
 		}
 		return null;
 	}
 
-  //Send this client message to all other connected clients
+  //Send the client message to all other connected clients
 	public void sendToAll(String message,int gchatClientSocketID) {
-		for(int index = 0; index < 10; index++) {
-			if(gchatClientSocketObj[index] != null) {
-			 //If other connected client available send this message 
-				if(!(gchatClientSocketObj[index].socketID == gchatClientSocketID))
+		
+		for(int index = 0; index < MAXIMUMCLIENT; index++) {
+		
+			if(gchatClientSocketObj[index].socket != null) {
+			
+			   //If other connected client available send this message 
+			  	 if(! (gchatClientSocketObj[index].socketID == gchatClientSocketID) )
 					gchatServerObj.networkSocketObj.sendMessage(gchatClientSocketObj[index].socket,message);
 			}
 		}
 	}
 
-	public void run() {
-		incomingClientHandler();
-	} 
-
- //Incoming Client Operation handle here
-	public void incomingClientHandler() {
-		GchatClientSocket clientGchatSocket = getGchatClientSocketByID(gchatServerObj.clientIndex);
-		gchatServerObj.clientIndex++;
-		String message = null;
-
-	  do {		
-	  //Receive message from connected client
-		message = gchatServerObj.networkSocketObj.receiveMessage(clientGchatSocket.socket);
-	  //Process the received client message
-		if(!message.equals("quit")) {
-			//this is valid client message so we sent this message to all other connected clients
-			sendToAll(message,clientGchatSocket.socketID);
-		}
-		else {
-		  try {
-		  //If client want to disconnect from this server by sending quit signal
-			clientGchatSocket.socket.close();	
-		  } catch(IOException ioe) {
-		  	System.out.println("Error :"+ioe);
-		  }
-			sendToAll(clientGchatSocket.socketID + " is disconnected from the server",clientGchatSocket.socketID);
-			deallocateResourceForClient(clientGchatSocket.socketID);
-
-		}
-	  } while(message.equals("quit"));
-
-
-
-	}
-  
-
- }
+}
