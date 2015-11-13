@@ -1,30 +1,31 @@
 ///////////////////////////////////////////////////////////////////////////
-/////File Name : GchatServer.java////////////////////////////////////////
-/////Coded by  : hariharan sathyanarayanan/////////////////////////////////
-/////copyright @ 2015 <harihara95@gmail.com>///////////////////////////////
+//// File Name : GchatServer.java            //////////////////////////////
+//// Coded by  : hariharan sathyanarayanan   //////////////////////////////
+//// Copyright @ 2015 <harihara95@gmail.com> //////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-
 
 package Gchat.SERVER;
 
 import java.io.*;
 import java.net.*;
 
-public class GchatServer {
-
-    static final int serverPort = 7298;
+//GchatServer-Server program used to connect client and transfer data between connected clients
+public class GchatServer 
+{
+	static final int serverPort = 7298;
 	Gchat.NetworkSocket networkSocketObj;
 	ServerSocket serverSocketObj;
 	Gchat.SERVER.ClientHandler clientHandlerObj;
 	int clientIndex;
 	Socket tempSocket;
-    
-
-  //Constructing GchatServer object fields 
-    public GchatServer() {
-    	try {
-    		serverSocketObj = new ServerSocket(serverPort);
-		} catch(IOException ioe) {
+ 
+  //GchatServer Constructor to initialize its object member fields 
+    public GchatServer() 
+    {
+       try 
+       {
+		 serverSocketObj = new ServerSocket(serverPort);
+	   } catch(IOException ioe) {
 			System.out.println("Error :"+ioe);
 		}
     	networkSocketObj = new Gchat.NetworkSocket();
@@ -67,7 +68,7 @@ public class GchatServer {
 		    	//Debugging phase
 		    	 // System.out.println("Allocation successfull");
 		    	  GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Welcome " +clientName+ " nice to connect you ...");
-    			
+    		   	
 				
 
 
@@ -76,7 +77,8 @@ public class GchatServer {
 			{
 		    
 		    	GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Maximum client Limit Reached");
-		    	try {
+		   		try 
+		   		{
 			     //Close this client connection
 			       GchatServerObj.tempSocket.close();
 				}catch(IOException ioe) {

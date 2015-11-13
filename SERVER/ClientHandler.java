@@ -12,7 +12,7 @@ import java.io.*;
 public class ClientHandler implements Runnable 
 {
   //MAXIMUMCLIENTS represents the maximum client limit the server can handle
-	private static final int MAXIMUMCLIENT = 10;
+	private static final int MAXIMUMCLIENT = 2;
 
     GchatClientSocket gchatClientSocketObj[];
 
@@ -40,18 +40,18 @@ public class ClientHandler implements Runnable
 	}
 
 	//testing
-		public ClientHandler() {
-			gchatClientSocketObj = new GchatClientSocket[MAXIMUMCLIENT];
-			clientIncomingThread = new Thread[MAXIMUMCLIENT];
-		    for(int i = 0; i < MAXIMUMCLIENT; i++){
+		//public ClientHandler() {
+		//	gchatClientSocketObj = new GchatClientSocket[MAXIMUMCLIENT];
+		//	clientIncomingThread = new Thread[MAXIMUMCLIENT];
+		//  for(int i = 0; i < MAXIMUMCLIENT; i++){
 		 // Initializing gchatClientSocketObj[]
-			gchatClientSocketObj[i] = new GchatClientSocket();
-			gchatClientSocketObj[i].socket = null;
-			clientIncomingThread[i] = null;
+		//	gchatClientSocketObj[i] = new GchatClientSocket();
+		//	gchatClientSocketObj[i].socket = null;
+		//	clientIncomingThread[i] = null;
 
-		 }
+		 //}
 		
-		}
+		//}
 
 
   //Allocate resource for newly connected client
@@ -74,7 +74,7 @@ public class ClientHandler implements Runnable
 			gchatClientSocketObj[resourceID].socketID = socketID;
 			gchatClientSocketObj[resourceID].socketName = socketName;
 		//Notify other client that this client is connected to the server
-			sendToAll(gchatClientSocketObj[resourceID].socketName+" is connected to the server",gchatClientSocketObj[resourceID].socketID);
+			sendToAll("GchatServer : "+gchatClientSocketObj[resourceID].socketName+" is connected to the server",gchatClientSocketObj[resourceID].socketID);
 			System.out.println(gchatClientSocketObj[resourceID].socketName + " is connected");
 	   	// Allocate incomingthread
 	        gchatServerObj.clientHandlerObj.clientIncomingThread[resourceID] = new Thread(gchatServerObj.clientHandlerObj);
@@ -165,7 +165,7 @@ public class ClientHandler implements Runnable
 		  	System.out.println("Error :"+ioe);
 		  }
 		  //client disconnected from server notification will send to all other connected clients
-			sendToAll(clientGchatSocket.socketName + " is disconnected from the server",clientGchatSocket.socketID);
+			sendToAll("GchatServer : "+clientGchatSocket.socketName + " is disconnected from the server",clientGchatSocket.socketID);
 			System.out.println(clientGchatSocket.socketName + " is disconnected");
 		 //Free this client allocated resource for reuse	
 			deallocateResourceForClient(clientGchatSocket.socketID);
