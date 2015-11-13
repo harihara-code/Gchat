@@ -9,87 +9,70 @@ package Gchat.SERVER;
 import java.io.*;
 import java.net.*;
 
-//GchatServer-Server program used to connect client and transfer data between connected clients
+//GchatServer-Server program used to connect clients and transfer data between connected clients
 public class GchatServer 
 {
-	static final int serverPort = 7298;
-	Gchat.NetworkSocket networkSocketObj;
-	ServerSocket serverSocketObj;
-	Gchat.SERVER.ClientHandler clientHandlerObj;
-	int clientIndex;
-	Socket tempSocket;
+	static final int GchatServerPort = 7298;
+	Gchat.NetworkSocket NetworkSocketObject;
+	Gchat.SERVER.ClientHandler ClientHandlerObject;
+	ServerSocket serverSocketObject;
+	Socket clientSocket;
+	int clientCounter;
  
-  //GchatServer Constructor to initialize its object member fields 
+  //GchatServer Object Initialization 
     public GchatServer() 
     {
        try 
        {
-		 serverSocketObj = new ServerSocket(serverPort);
+		 serverSocketObject = new ServerSocket(GchatServerPort);
 	   } catch(IOException ioe) {
 			System.out.println("Error :"+ioe);
 		}
-    	networkSocketObj = new Gchat.NetworkSocket();
-		clientHandlerObj = new ClientHandler(this);
-		clientIndex = 0;
-		tempSocket = null;
-	
-    }
+    	NetworkSocketObject = new Gchat.NetworkSocket();
+		ClientHandlerObject = new ClientHandler(this);
+		clientCounter = 0;
+		clientSocket = null;
+	}
 
-
-	public static void main(String args[]) {
-		GchatServer GchatServerObj = new GchatServer();
+    public static void main(String args[]) 
+    {
+		GchatServer GchatServerObject = new GchatServer();
 		String clientName = null;
-   	//Debugging phase
    	    System.out.println("GchatServer Started");
-		 		
- 
 		do 
 		{
 			try
 			{
-   		  //Accepting new client connection
-				GchatServerObj.tempSocket = GchatServerObj.serverSocketObj.accept();
-				//Debugging phase
-				  //System.out.println("new Client Connected");
+   	    	  //Waiting for new client connection
+				GchatServerObject.clientSocket = GchatServerObject.serverSocketObject.accept();
 		 	} 
 		 	catch(IOException ioe) 
 		 	{
 				System.out.println("Error :"+ioe);
 			}
-    		
-    	//Get the name of the client
-    		clientName = GchatServerObj.networkSocketObj.receiveMessage(GchatServerObj.tempSocket);
-		
-		  //Allocating Resource for the newly connected client
-		    if(GchatServerObj.clientHandlerObj.allocateResourceForClient(GchatServerObj.tempSocket,
-		    															 GchatServerObj.clientIndex,
-		    															 clientName) ) 
-		    {
-		    	//Debugging phase
-		    	 // System.out.println("Allocation successfull");
-		    	  GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Welcome " +clientName+ " nice to connect you ...");
-    		   	
-				
-
-
-			} 
-			else
+      	  //Get the name of the client
+    		clientName = GchatServerObject.NetworkSocketObject.receiveMessage(GchatServerObject.clientSocket);
+		  //Resource allocation for new client
+		    if(GchatServerObject.ClientHandlerObject.resourceAllocation(GchatServerObject.clientSocket,
+		    			                                                GchatServerObject.clientCounter,
+		    								                            clientName)) 
 			{
-		    
-		    	GchatServerObj.networkSocketObj.sendMessage(GchatServerObj.tempSocket,"Maximum client Limit Reached");
-		   		try 
+		        GchatServerObject.NetworkSocketObject .sendMessage(GchatServerObject.clientSocket,
+		      	                                         "Welcome " +clientName+ " nice to connect you ...");
+			}
+    		else
+			{
+		     	GchatServerObject.NetworkSocketObject.sendMessage(GchatServerObject.clientSocket,
+		     													  "Maximum client Limit Reached");
+		    	try 
 		   		{
 			     //Close this client connection
-			       GchatServerObj.tempSocket.close();
+			       GchatServerObject.clientSocket.close();
 				}catch(IOException ioe) {
 					System.out.println("Error :"+ioe);
 				}    
-				GchatServerObj.tempSocket = null;
-
+				GchatServerObject.clientSocket = null;
 		    }
-
-		} while(true);
-
+     	}while(true);
 	}
- 
-}
+ }
