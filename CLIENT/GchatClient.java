@@ -86,18 +86,18 @@ public class GchatClient implements Runnable
      
           //Free the consoleLock
       	    clientObj.consoleLock = false;
-		     }
+         }
          else if(clientOption.equals("e")) 
          {
           //Sending message to the server
       	    clientObj.socket.sendMessage(clientObj.GchatServerSocket,"quit");
-		      //System.out.println("Outcoming Closed");
+	  //System.out.println("Outcoming Closed");
           //Chat Operation is completed clientConsoleScreen is free now 
-          	clientObj.consoleLock = false;
+            clientObj.consoleLock = false;
           //Wait until newThread terminate its execution
-		        newThread.join();
+	    newThread.join();
       	  //System.out.println("Incoming Closed");
-	       }
+	 }
          else 
          {
           //Chat Operation is completed clientConsoleScreen is free now 
@@ -109,6 +109,7 @@ public class GchatClient implements Runnable
       System.out.println("GchatClient Terminated");
     }
 
+<<<<<<< HEAD
   //Receive message from GchatServer
     public void run() 
     {
@@ -134,3 +135,28 @@ public class GchatClient implements Runnable
     	 } while(!message.equals("disconnect"));
     }
 }
+=======
+public void run() 
+{
+  String message = null;
+  do
+  {
+  //Get the message from the server.
+    message = socket.receiveMessage(GchatServerSocket);
+  //If client Console Screen is busy. 
+    if(consoleLock) 
+    {
+     //console screen is busy in chatting 
+       while(consoleLock) 
+        {
+  	} 
+    }
+  //Check disconnect signal sent
+    if(!message.equals("disconnect"))
+     //console screen is free now
+       System.out.println("\n"+message);
+  } while(!message.equals("disconnect"));
+ //System.out.println("disconnect signal sent by the server");
+}
+}
+>>>>>>> 3b8b755a6b0acd2763dc74223ce769550b7b2d1f
