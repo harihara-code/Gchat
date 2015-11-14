@@ -12,7 +12,7 @@ import java.io.*;
 //ClientHandler-GchatServer use this class to handle client connection
 public class ClientHandler implements Runnable 
 {
-  	private static final int MAX_CLIENT_HANDLE = 2;
+  	private static final int MAX_CLIENT_HANDLE = 10;
     GchatClientSocket GchatClientSocketObject[];
 	GchatServer GchatServerObjectRef;
     Thread threadObject[];
@@ -49,7 +49,7 @@ public class ClientHandler implements Runnable
 			sendToOtherClients("GchatServer : "+
 								GchatClientSocketObject[resourceID].socketName+
 								" is connected to the server",
-									GchatClientSocketObject[resourceID].socketID);
+								GchatClientSocketObject[resourceID].socketID);
 		  //Start new thread to receive client messages
 	        GchatServerObjectRef.ClientHandlerObject.threadObject[resourceID] = new Thread(GchatServerObjectRef.ClientHandlerObject);
 	        GchatServerObjectRef.ClientHandlerObject.threadObject[resourceID].start();
@@ -164,9 +164,8 @@ public class ClientHandler implements Runnable
 			{
 		    	 if(GchatClientSocketObject[index].socketID != ID)
 					GchatServerObjectRef.NetworkSocketObject.sendMessage(GchatClientSocketObject[index].socket,
-																	  message);
+																	     message);
 			}
 		}
 	}
-
 }

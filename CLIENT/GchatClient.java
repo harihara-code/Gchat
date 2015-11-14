@@ -61,7 +61,7 @@ public class GchatClient implements Runnable
         System.out.println("Menu Options\n-----------------");
         System.out.println("1.To Chat - Enter c");
         System.out.println("2.To see Who's online - Enter v");
-        System.out.println("3.To Exit - Enter e");
+        System.out.println("4.To Exit - Enter e");
         System.out.print("Enter the valid menu option : ");
         clientOption = consoleScreen.readLine();
     
@@ -107,30 +107,30 @@ public class GchatClient implements Runnable
 
       }while(!clientOption.equals("e"));
       System.out.println("GchatClient Terminated");
-}
+    }
 
-public void run() 
-{
-  String message = null;
-  do
-  {
-  //Get the message from the server.
-	  message = socket.receiveMessage(GchatServerSocket);
-  //If client Console Screen is busy. 
-	  if(consoleLock) 
+  //Receive message from GchatServer
+    public void run() 
     {
-      //console screen is busy in chatting 
-   	  	while(consoleLock) 
+      String message = null;
+      do
+      {
+      //Get the message from the server.
+    	  message = socket.receiveMessage(GchatServerSocket);
+      //If client console screen is busy in chatting 
+    	  if(consoleLock) 
         {
-  	    }
-	  }
+          //console screen is busy in chatting 
+       	  	while(consoleLock) 
+            {
+      	    }
+    	  }
 
-	//Check disconnect signal sent
-	  if(!message.equals("disconnect"))
-		//console screen is free now
-	  	System.out.println("\n"+message);
+    	//Check disconnect signal sent
+    	  if(!message.equals("disconnect"))
+    		//console screen is free now
+    	  	System.out.println("\n"+message);
 
-	 } while(!message.equals("disconnect"));
-	 //System.out.println("disconnect signal sent by the server");
- }
+    	 } while(!message.equals("disconnect"));
+    }
 }
