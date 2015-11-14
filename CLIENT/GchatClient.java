@@ -135,7 +135,7 @@ public class GchatClient implements Runnable
     	 } while(!message.equals("disconnect"));
     }
 }
-=======
+
 public void run() 
 {
   String message = null;
@@ -159,4 +159,4 @@ public void run()
  //System.out.println("disconnect signal sent by the server");
 }
 }
->>>>>>> 3b8b755a6b0acd2763dc74223ce769550b7b2d1f
+
