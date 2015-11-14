@@ -57,13 +57,13 @@ public class GchatServer
 		    			                                                GchatServerObject.clientCounter,
 		    								                            clientName)) 
 			{
-		        GchatServerObject.NetworkSocketObject .sendMessage(GchatServerObject.clientSocket,
+		        GchatServerObject.NetworkSocketObject.sendMessage(GchatServerObject.clientSocket,
 		      	                                         "Welcome " +clientName+ " nice to connect you ...");
 			}
     		else
 			{
 		     	GchatServerObject.NetworkSocketObject.sendMessage(GchatServerObject.clientSocket,
-		     													  "Maximum client Limit Reached");
+		     													  "Client handle limit exceeded");
 		    	try 
 		   		{
 			     //Close this client connection

@@ -32,9 +32,7 @@ public class ClientHandler implements Runnable
 	}
 
   //Client Resource Allocation
-	public boolean resourceAllocation(Socket s,
-									  int socketID,
-									  String socketName) 
+	public boolean resourceAllocation(Socket s,int socketID,String socketName) 
 	{
 		int resourceID = getAvailableResourceIndex();
     	if(resourceID == -1) 
@@ -132,7 +130,7 @@ public class ClientHandler implements Runnable
        		else
        		{
     	      //Message is attached with sender's name 
-			    message = clientGchatSocket.socketName + ":"+message;
+			    message = clientGchatSocket.socketName + " : "+message;
 			  //GchatServer send this client message to all other connected clients
 			    sendToOtherClients(message,clientGchatSocket.socketID);
 	    	}
@@ -140,6 +138,7 @@ public class ClientHandler implements Runnable
 
 		
 	} 
+  
   
   //Get GhatClientSocketObject through its socketID
     public GchatClientSocket getGchatClientSocketObjectByID(int id) 
