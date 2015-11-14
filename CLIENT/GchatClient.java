@@ -110,6 +110,13 @@ public class GchatClient implements Runnable
 
  
 
+<<<<<<< HEAD
+=======
+    	 } while(!message.equals("disconnect"));
+    }
+}
+
+>>>>>>> c3b071a945a2abba47108d64f1fab4b1322df4ad
 public void run() 
 {
   String message = null;
